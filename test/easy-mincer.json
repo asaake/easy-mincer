@@ -1,0 +1,7 @@
+{
+    "main": "main.js",
+    "dest": "main.js",
+    "paths": [
+      "app/assets/javascripts"
+    ]
+}
