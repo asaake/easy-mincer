@@ -9,6 +9,11 @@ npm install -g easy-mincer
 mkdir my-project
 cd my-project
 easy-mincer create
+
+cd app/assets/javascripts
+vi main.coffee # => class Main
+
+easy-mincer start # => http://localhost:3000/main.coffee
 ```
 
 ```
