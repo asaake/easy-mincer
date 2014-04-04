@@ -1,0 +1,29 @@
+#!/usr/bin/env coffee
+
+path = require("path")
+program = require("commander")
+
+program
+  .version('0.0.1')
+  .usage("start|compile [option]")
+  .option("compile", "compile source code.")
+  .option("start", "start mincer server. default: localhost:3000")
+  .option("-f, --file [file]", "use easy-mincer config. default is {cwd}/easy-mincer.json")
+  .parse(process.argv)
+
+if program.file?
+  program.file = path.resolve(program.file)
+else
+  program.file = "#{process.cwd()}/easy-mincer.json"
+
+EasyMincer = require "../lib/easy-mincer.coffee"
+easyMincer = new EasyMincer(program.file)
+
+if program.compile
+  easyMincer.compile()
+
+if program.start
+  easyMincer.start()
+
+
+
