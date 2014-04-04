@@ -15,6 +15,8 @@ module.exports = class ProjectCreator
     fs.readdirSync(@projectDir).forEach (file) =>
       fu.copy(path.join(@projectDir, file), path.join(@targetDir, file))
 
+    fs.rename("#{@targetDir}/gitignore", "#{@targetDir}/.gitignore")
+
   clean: () ->
     fu.clean(@targetDir, false)
 
