@@ -1,0 +1,20 @@
+{
+  "name": "",
+  "version": "0.0.1",
+  "description": "",
+  "dependencies": {
+    "jade": "*",
+    "coffee-script": "*",
+    "less": "*",
+    "bower": "*"
+  },
+  "devDependencies": {
+    "easy-mincer": "*"
+  },
+  "scripts": {
+    "compile": "easy-mincer compile",
+    "start": "easy-mincer start"
+  },
+  "author": "",
+  "license": "MIT"
+}

@@ -1,0 +1,12 @@
+{
+    "targets": ["main.js"],
+    "paths": [
+      "bower_components",
+      "app/assets/javascripts",
+      "app/assets/stylesheets",
+      "app/assets/templates",
+      "test/assets/javascripts",
+      "test/assets/stylesheets",
+      "test/assets/templates"
+    ]
+}

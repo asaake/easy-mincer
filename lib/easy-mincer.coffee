@@ -2,6 +2,7 @@ Mincer = require("mincer")
 path = require("path")
 fs = require("fs")
 connect = require("connect")
+fu = require("./file-util.coffee")
 
 module.exports = class EasyMincer
 
@@ -31,8 +32,8 @@ module.exports = class EasyMincer
 
   compile: () ->
 
-    @_clean(@config.destDir, false)
-    @_clean(@config.manifestDir, false)
+    fu.clean(@config.destDir, false)
+    fu.clean(@config.manifestDir, false)
 
     assetsData = @_manifest()
     destFiles = @_export(assetsData)
@@ -82,18 +83,3 @@ module.exports = class EasyMincer
         console.info("export #{writeFile}")
 
     return destFiles
-
-  _clean: (path, deleteFolder=true) ->
-    if fs.existsSync(path)
-      files = fs.readdirSync(path)
-      files.forEach (file, index) ->
-        curPath = "#{path}/#{file}"
-        if fs.lstatSync(curPath).isDirectory()
-          @_clean(curPath);
-        else
-          fs.unlinkSync(curPath);
-          console.log("delete #{curPath}")
-
-      if deleteFolder
-        fs.rmdirSync(path);
-        console.log("delete #{path}")

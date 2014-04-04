@@ -1,5 +1,6 @@
 #!/usr/bin/env coffee
 
+fs = require("fs")
 path = require("path")
 program = require("commander")
 
@@ -8,6 +9,7 @@ program
   .usage("start|compile [option]")
   .option("compile", "compile source code.")
   .option("start", "start mincer server. default: localhost:3000")
+  .option("create", "create easy mincer project.")
   .option("-f, --file [file]", "use easy-mincer config. default is {cwd}/easy-mincer.json")
   .parse(process.argv)
 
@@ -16,14 +18,59 @@ if program.file?
 else
   program.file = "#{process.cwd()}/easy-mincer.json"
 
-EasyMincer = require "../lib/easy-mincer.coffee"
-easyMincer = new EasyMincer(program.file)
-
 if program.compile
+  EasyMincer = require("../lib/easy-mincer.coffee")
+  easyMincer = new EasyMincer(program.file)
   easyMincer.compile()
 
 if program.start
+  EasyMincer = require("../lib/easy-mincer.coffee")
+  easyMincer = new EasyMincer(program.file)
   easyMincer.start()
+
+if program.create
+
+  ProjectCreator = require("../lib/project-creator.coffee")
+  projectCreator = new ProjectCreator(process.cwd())
+
+  itemSize = fs.readdirSync(process.cwd()).length
+  if itemSize != 0
+    readline = require('readline');
+    rl = readline.createInterface({
+      input: process.stdin
+      output: process.stdout
+    })
+
+    question = (answer) ->
+      switch answer
+        when "y"
+          rl.close()
+          console.log("")
+          console.log("clean #{process.cwd()}")
+          projectCreator.clean()
+          console.log("")
+
+          console.log("create project #{process.cwd()}")
+          projectCreator.create()
+          console.log("success")
+        when "n"
+          process.exit()
+        else
+          rl.question("clean directory? [y/n] -> ", question)
+
+    console.log("#{process.cwd()} is under #{itemSize} items.")
+    question()
+
+  else
+    projectCreator.create()
+    console.log("success")
+
+
+
+
+
+
+
 
 
 

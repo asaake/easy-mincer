@@ -1,0 +1,31 @@
+{
+  "name": "",
+  "version": "0.0.1",
+  "homepage": "",
+  "authors": [
+    ""
+  ],
+  "main": "main.js",
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "app",
+    "bower_components",
+    "manifest",
+    "node_modules",
+    "test",
+    "bower.json",
+    "easy-mincer.json",
+    "package.json"
+  ],
+  "dependencies": {
+    "console-polyfill": "*",
+    "sugar": "*"
+  },
+  "devDependencies": {
+    "mocha": "*",
+    "sinon": "*",
+    "expect": "*",
+    "sinon-expect": "*"
+  }
+}
