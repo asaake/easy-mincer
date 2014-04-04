@@ -2,4 +2,3 @@
 --reporter dot
 --ui bdd
 --compilers coffee:coffee-script/register
---easy-mincer-dir ./test

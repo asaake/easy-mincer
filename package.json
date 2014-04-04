@@ -1,11 +1,13 @@
 {
   "name": "easy-mincer",
-  "version": "0.0.2",
+  "bin": "bin/easy-mincer",
+  "version": "0.1.0",
   "description": "easy start mincer",
   "dependencies": {
     "coffee-script": "*",
     "mincer": "*",
-    "connect": "*"
+    "connect": "*",
+    "commander": "*"
   },
   "devDependencies": {
       "expect.js": "*",
