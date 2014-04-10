@@ -5,7 +5,7 @@ path = require("path")
 program = require("commander")
 
 program
-  .version('1.1.0')
+  .version('1.1.1')
   .usage("start|compile [option]")
   .option("compile", "compile source code.")
   .option("start", "start mincer server. default: localhost:3000")
@@ -51,7 +51,11 @@ if program.init
           console.log("")
 
           console.log("create project #{process.cwd()}")
-          projectCreator.create()
+          try
+            projectCreator.create(process)
+          catch e
+            projectCreator.clean()
+            throw e
           console.log("success")
         when "n"
           process.exit()
@@ -62,7 +66,11 @@ if program.init
     question()
 
   else
-    projectCreator.create(process)
+    try
+      projectCreator.create(process)
+    catch e
+      projectCreator.clean()
+      throw e
     console.log("success")
 
 
