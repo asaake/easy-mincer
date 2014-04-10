@@ -14,3 +14,5 @@ describe "ProjectCreator", () ->
 
     creator.create()
     expect(fs.existsSync("#{dir}/README.md")).to.eql(true)
+    expect(fs.existsSync("#{dir}/gitignore")).to.eql(false)
+    expect(fs.existsSync("#{dir}/.gitignore")).to.eql(true)

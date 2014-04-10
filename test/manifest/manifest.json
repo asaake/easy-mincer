@@ -1,13 +1,20 @@
 {
   "assets": {
-    "main.js": "main-374970cff296f554017085cbb28f6aca.js"
+    "main.js": "main-374970cff296f554017085cbb28f6aca.js",
+    "main.css": "main-537c7d77d15e44e09b6416e98c64b712.css"
   },
   "files": {
     "main-374970cff296f554017085cbb28f6aca.js": {
       "logical_path": "main.js",
-      "mtime": "2014-04-03T03:04:35.000Z",
+      "mtime": "2014-04-04T15:46:54.000Z",
       "size": 75,
       "digest": "374970cff296f554017085cbb28f6aca"
+    },
+    "main-537c7d77d15e44e09b6416e98c64b712.css": {
+      "logical_path": "main.css",
+      "mtime": "2014-04-10T04:22:46.000Z",
+      "size": 25,
+      "digest": "537c7d77d15e44e09b6416e98c64b712"
     }
   }
 }

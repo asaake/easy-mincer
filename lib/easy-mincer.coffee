@@ -3,6 +3,8 @@ path = require("path")
 fs = require("fs")
 connect = require("connect")
 fu = require("./file-util.coffee")
+UglifyJS = require("uglify-js")
+CleanCSS = require("clean-css")
 
 module.exports = class EasyMincer
 
@@ -73,13 +75,48 @@ module.exports = class EasyMincer
       fs.mkdirSync(@config.destDir)
 
     for target in @config.targets
-      readFile = assetsData.assets[target]
-      if readFile?
-        writeFile = "#{@config.destDir}/#{target}"
-        readFile = "#{@config.manifestDir}/#{readFile}"
-        fs = require("fs")
-        fs.writeFileSync(writeFile, fs.readFileSync(readFile))
-        destFiles.push(writeFile)
-        console.info("export #{writeFile}")
+      dest = @_dest(assetsData, target)
+      minify = @_minify(dest)
+      fs.writeFileSync(minify.file, minify.code)
+      destFiles.push(dest.file)
+      console.info("export #{dest.file}")
+      console.info("export #{minify.file}")
 
     return destFiles
+
+  _dest: (assetsData, target) ->
+
+    if not(assetsData.assets[target]?)
+      throw new Error("manifest not export #{target}.")
+
+    file = "#{@config.destDir}/#{target}"
+    code = fs.readFileSync("#{@config.manifestDir}/#{assetsData.assets[target]}")
+    fs.writeFileSync(file, code)
+    return dest = {
+      file: file
+      code: code
+    }
+
+  _minify: (dest) ->
+    extIndex = dest.file.lastIndexOf(".")
+    ext = dest.file.slice(extIndex + 1)
+    writeFile = dest.file.slice(0, extIndex) + ".min." + ext
+    code = null
+    switch ext
+      when "js"
+        code = @_minifyJS(dest.file)
+      when "css"
+        code = @_minifyCSS(dest.file)
+      else
+        throw new Error("Failed minify compile #{writeFile} file has not extension.")
+
+    return {
+      file: writeFile
+      code: code
+    }
+
+  _minifyJS: (readFile) ->
+    UglifyJS.minify(readFile).code
+
+  _minifyCSS: (readFile) ->
+    new CleanCSS().minify(fs.readFileSync(readFile))

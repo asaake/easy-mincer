@@ -19,7 +19,7 @@ describe "EasyMincer", () ->
     expect(environment.paths[0]).to.eql("#{dir}/app/assets/javascripts")
 
   it "compile", () ->
-    mainSrc = """
+    mainJs = """
       var Main;
 
       Main = (function() {
@@ -29,17 +29,48 @@ describe "EasyMincer", () ->
 
       })();
     """
+    mainMinJs = "var Main;Main=function(){function n(){}return n}();"
+
+    mainCss = """
+      .p {
+        color: #f938ab;
+      }
+
+    """
+    mainMinCss = ".p{color:#f938ab}"
 
     dir = path.dirname(@file)
     result = @easyMincer.compile()
 
+    # manifest js
     manifestFile = path.resolve("#{dir}/manifest/" + result.assetsData.assets["main.js"])
     src = fs.readFileSync(manifestFile, "utf8")
-    expect(src).to.eql(mainSrc)
+    expect(src).to.eql(mainJs)
 
+    # dest js
     destFile = path.resolve("#{dir}/dest/main.js")
     src = fs.readFileSync(destFile, "utf8")
-    expect(src).to.eql(mainSrc)
+    expect(src).to.eql(mainJs)
+
+    # dest min js
+    destMinFile = path.resolve("#{dir}/dest/main.min.js")
+    src = fs.readFileSync(destMinFile, "utf8")
+    expect(src).to.eql(mainMinJs)
+
+    # manifest css
+    manifestFile = path.resolve("#{dir}/manifest/" + result.assetsData.assets["main.css"])
+    src = fs.readFileSync(manifestFile, "utf8")
+    expect(src).to.eql(mainCss)
+
+    # dest css
+    destFile = path.resolve("#{dir}/dest/main.css")
+    src = fs.readFileSync(destFile, "utf8")
+    expect(src).to.eql(mainCss)
+
+    # dest min css
+    destMinFile = path.resolve("#{dir}/dest/main.min.css")
+    src = fs.readFileSync(destMinFile, "utf8")
+    expect(src).to.eql(mainMinCss)
 
   it "start", (done) ->
     @easyMincer.start()

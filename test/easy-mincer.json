@@ -1,6 +1,7 @@
 {
-  "targets": ["main.js"],
+  "targets": ["main.js", "main.css"],
   "paths": [
-    "app/assets/javascripts"
+    "app/assets/javascripts",
+    "app/assets/stylesheets"
   ]
 }
