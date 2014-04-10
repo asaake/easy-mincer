@@ -26,9 +26,10 @@ sudo easy-mincer compile # compile src
 ```
 # easy-mincer.json
 {
-  "targets": ["main.js"],     # compile target file name.
+  "targets": ["main.js", "main.css"], # compile target file name.
   "paths": [
-    "app/assets/javascripts"  # mincer appendPath
+    "app/assets/javascripts", # mincer appendPath
+    "app/assets/stylesheets"  # mincer appendPath
   ]
 }
 ```
