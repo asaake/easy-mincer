@@ -12,7 +12,12 @@ describe "ProjectCreator", () ->
     creator.clean()
     expect(fs.existsSync("#{dir}/README.md")).to.eql(false)
 
-    creator.create()
+    creator.create(process)
     expect(fs.existsSync("#{dir}/README.md")).to.eql(true)
     expect(fs.existsSync("#{dir}/gitignore")).to.eql(false)
     expect(fs.existsSync("#{dir}/.gitignore")).to.eql(true)
+
+    stats = fs.statSync("#{dir}/.gitignore")
+    expect(stats.uid).to.eql(process.getuid())
+    expect(stats.gid).to.eql(process.getgid())
+

@@ -2,13 +2,13 @@ easy-mincer
 ===========
 
 ```
-npm install -g easy-mincer
+sudo npm install -g easy-mincer
 ```
 
 ```
 mkdir my-project
 cd my-project
-easy-mincer create
+sudo easy-mincer init
 
 cd app/assets/javascripts
 vi main.coffee # => class Main
@@ -17,9 +17,9 @@ easy-mincer start # => http://localhost:3000/main.coffee
 ```
 
 ```
-easy-mincer create  # create init project
-easy-mincer start   # start server
-easy-mincer compile # compile src
+sudo easy-mincer init  # create init project
+sudo easy-mincer start   # start server
+sudo easy-mincer compile # compile src
 ```
 
 
