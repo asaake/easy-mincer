@@ -21,6 +21,8 @@ module.exports = class ProjectCreator
     fs.readdirSync(@targetDir).forEach (file) =>
       fu.chownSync(path.join(@targetDir, file), process.getuid(), process.getgid())
 
+    fs.rename("#{@targetDir}/gitignore", "#{@targetDir}/.gitignore")
+
   clean: () ->
     fu.cleanSync(@targetDir, false)
 
