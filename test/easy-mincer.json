@@ -2,6 +2,7 @@
   "targets": ["main.js", "main.css"],
   "paths": [
     "app/assets/javascripts",
-    "app/assets/stylesheets"
+    "app/assets/stylesheets",
+    "app/assets/templates"
   ]
 }
