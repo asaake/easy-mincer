@@ -1,4 +1,5 @@
 {
+  "serverRoot": "/assets",
   "targets": ["main.js", "main.css"],
   "paths": [
     "app/assets/javascripts",

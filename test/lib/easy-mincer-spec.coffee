@@ -74,7 +74,7 @@ describe "EasyMincer", () ->
 
   it "start", (done) ->
     @easyMincer.start()
-    http.get "http://localhost:3000/main.coffee", (res) ->
+    http.get "http://localhost:3000/assets/main.coffee", (res) ->
       expect(res.statusCode).to.eql(200)
       res.setEncoding("utf8")
       res.on "data", (chunk) ->

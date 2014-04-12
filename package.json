@@ -1,7 +1,7 @@
 {
   "name": "easy-mincer",
   "bin": "bin/easy-mincer",
-  "version": "1.1.4",
+  "version": "1.1.5",
   "description": "easy start mincer",
   "dependencies": {
     "coffee-script": "*",

@@ -11,6 +11,7 @@ module.exports = class EasyMincer
   constructor: (file) ->
     console.log("config: #{file}")
     @config = require(file)
+    @config.serverRoot ?= "/"
     @config.mainDir = path.dirname(file)
     @config.destDir = @config.mainDir + "/dest"
     @config.manifestDir = @config.mainDir + "/manifest"
@@ -27,7 +28,7 @@ module.exports = class EasyMincer
       error: console.error
     })
     @app = connect()
-    @app.use("/", Mincer.createServer(@environment))
+    @app.use(@config.serverRoot, Mincer.createServer(@environment))
     @app.listen(3000, (err) ->
       if err
         console.error("Failed start server: " + (err.message || err.toString()));
@@ -38,8 +39,8 @@ module.exports = class EasyMincer
 
   compile: () ->
 
-    fu.clean(@config.destDir, false)
-    fu.clean(@config.manifestDir, false)
+    fu.cleanSync(@config.destDir, false)
+    fu.cleanSync(@config.manifestDir, false)
 
     assetsData = @_manifest()
     destFiles = @_export(assetsData)

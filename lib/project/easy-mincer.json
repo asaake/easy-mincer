@@ -1,4 +1,5 @@
 {
+    "serverRoot": "/assets",
     "targets": ["main.js"],
     "paths": [
       "bower_components",
