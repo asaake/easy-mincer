@@ -1,9 +1,19 @@
 {
+  "port": 3000,
   "serverRoot": "/assets",
   "targets": ["main.js", "main.css"],
   "paths": [
     "app/assets/javascripts",
     "app/assets/stylesheets",
     "app/assets/templates"
-  ]
+  ],
+  "rewrites": {
+    "/**": "/index.html"
+  },
+  "log": {
+    "debug": false,
+    "info": false,
+    "warn": true,
+    "error": true
+  }
 }

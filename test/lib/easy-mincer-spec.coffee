@@ -10,6 +10,12 @@ describe "EasyMincer", () ->
     @file = path.resolve("#{__dirname}/../easy-mincer.json")
     @easyMincer = new EasyMincer(@file)
 
+  afterEach (done) ->
+    if @easyMincer? && @easyMincer.isRunning()
+      @easyMincer.stop () -> done()
+    else
+      done()
+
   it "readConfig", () ->
     config = @easyMincer.config
     environment = @easyMincer.environment
@@ -74,10 +80,11 @@ describe "EasyMincer", () ->
 
   it "start", (done) ->
     @easyMincer.start()
-    http.get "http://localhost:3000/assets/main.coffee", (res) ->
+    port = @easyMincer.config.port
+    http.get "http://localhost:#{port}/assets/main.coffee", (res) =>
       expect(res.statusCode).to.eql(200)
       res.setEncoding("utf8")
-      res.on "data", (chunk) ->
+      res.on "data", (chunk) =>
         #console.log('BODY: ' + chunk)
         expect(chunk).to.eql("""
           var Main;
@@ -89,6 +96,16 @@ describe "EasyMincer", () ->
 
           })();
         """)
+        done()
+
+  it "rewrite", (done) ->
+    @easyMincer.start()
+    port = @easyMincer.config.port
+    http.get "http://localhost:#{port}/hello-world/me", (res) =>
+      expect(res.statusCode).to.eql(200)
+      res.setEncoding("utf8")
+      res.on "data", (chunk) =>
+        expect(chunk).to.eql("index")
         done()
 
 

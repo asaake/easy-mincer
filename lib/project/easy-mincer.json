@@ -1,13 +1,23 @@
 {
-    "serverRoot": "/assets",
-    "targets": ["main.js"],
-    "paths": [
-      "bower_components",
-      "app/assets/javascripts",
-      "app/assets/stylesheets",
-      "app/assets/templates",
-      "test/assets/javascripts",
-      "test/assets/stylesheets",
-      "test/assets/templates"
-    ]
+  "port": 3000,
+  "serverRoot": "/assets",
+  "targets": ["main.js"],
+  "paths": [
+    "bower_components",
+    "app/assets/javascripts",
+    "app/assets/stylesheets",
+    "app/assets/templates",
+    "test/assets/javascripts",
+    "test/assets/stylesheets",
+    "test/assets/templates"
+  ],
+  "rewrites": {
+    "/**": "/index.html"
+  },
+  "log": {
+    "debug": false,
+    "info": false,
+    "warn": true,
+    "error": true
+  }
 }
