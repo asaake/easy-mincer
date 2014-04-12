@@ -22,6 +22,10 @@ module.exports = class EasyMincer
       console.log("    appendPath:[#{target}]")
 
   start: () ->
+    Mincer.logger.use({
+      warn: console.warn
+      error: console.error
+    })
     @app = connect()
     @app.use("/", Mincer.createServer(@environment))
     @app.listen(3000, (err) ->
@@ -92,7 +96,7 @@ module.exports = class EasyMincer
     file = "#{@config.destDir}/#{target}"
     code = fs.readFileSync("#{@config.manifestDir}/#{assetsData.assets[target]}")
     fs.writeFileSync(file, code)
-    return dest = {
+    return {
       file: file
       code: code
     }
