@@ -40,6 +40,8 @@ absolutePath = (path) ->
 log = (level, log) ->
   Mincer.logger[level](log)
 
+Mincer.CoffeeEngine.configure({bare: false})
+
 module.exports = class EasyMincer
 
   constructor: (file) ->
@@ -73,7 +75,10 @@ module.exports = class EasyMincer
     if @config.useSourceMaps
       @environment.enable("source_maps")
 
-  start: (callback=null) ->
+    @configureLogger()
+
+
+  configureLogger: () ->
     # logger
     logger = {}
     @config.log ?= {}
@@ -92,6 +97,8 @@ module.exports = class EasyMincer
       logger["error"] = console.error
 
     Mincer.logger.use(logger)
+
+  start: (callback=null) ->
 
     @app = connect()
     @app.use (req, res, next) =>

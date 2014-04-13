@@ -26,16 +26,19 @@ describe "EasyMincer", () ->
 
   it "compile", () ->
     mainJs = """
-      var Main;
+      (function() {
+        var Main;
 
-      Main = (function() {
-        function Main() {}
+        Main = (function() {
+          function Main() {}
 
-        return Main;
+          return Main;
 
-      })();
+        })();
+
+      }).call(this);
     """
-    mainMinJs = "var Main;Main=function(){function n(){}return n}();"
+    mainMinJs = "(function(){var n;n=function(){function n(){}return n}()}).call(this);"
 
     mainCss = """
       .p {
@@ -87,14 +90,17 @@ describe "EasyMincer", () ->
       res.on "data", (chunk) =>
         #console.log('BODY: ' + chunk)
         expect(chunk).to.eql("""
-          var Main;
+          (function() {
+            var Main;
 
-          Main = (function() {
-            function Main() {}
+            Main = (function() {
+              function Main() {}
 
-            return Main;
+              return Main;
 
-          })();
+            })();
+
+          }).call(this);
         """)
         done()
 
