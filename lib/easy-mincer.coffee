@@ -70,10 +70,8 @@ module.exports = class EasyMincer
       @environment.appendPath(target);
       console.info("    appendPath:[#{target}]")
 
-#    @environment.enable("source_maps")
-#    @environment.jsCompressor  = "uglify"
-#    @environment.cssCompressor = "csswring"
-
+    if @config.useSourceMaps
+      @environment.enable("source_maps")
 
   start: (callback=null) ->
     # logger

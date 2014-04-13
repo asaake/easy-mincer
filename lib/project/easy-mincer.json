@@ -19,5 +19,6 @@
     "info": false,
     "warn": true,
     "error": true
-  }
+  },
+  "useSourceMaps": true
 }
