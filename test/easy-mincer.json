@@ -7,8 +7,13 @@
     "app/assets/stylesheets",
     "app/assets/templates"
   ],
+  "publicPaths": [
+    "app/public/javascripts",
+    "app/public/stylesheets",
+    "app/public/templates"
+  ],
   "rewrites": {
-    "/**": "/index.html"
+    "/**": "/public.html"
   },
   "log": {
     "debug": false,
@@ -16,5 +21,7 @@
     "warn": true,
     "error": true
   },
-  "useSourceMaps": false
+  "useSourceMaps": false,
+  "useJsCompressor": false,
+  "useCssCompressor": false
 }

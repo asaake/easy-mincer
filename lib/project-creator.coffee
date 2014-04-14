@@ -1,6 +1,8 @@
-fs = require("fs")
-path = require("path")
-fu = require("./file-util.coffee")
+require "coffee-script"
+
+fs = require "fs"
+path = require "path"
+fu = require "./file-util"
 
 module.exports = class ProjectCreator
 

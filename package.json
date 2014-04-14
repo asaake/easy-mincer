@@ -4,20 +4,21 @@
   "version": "1.2.2",
   "description": "easy start mincer",
   "dependencies": {
+    "sugar": "*",
     "coffee-script": "*",
     "less": "*",
     "ejs": "*",
     "mincer": "*",
-    "connect": "*",
+    "express": "*",
     "commander": "*",
     "uglify-js": "*",
-    "clean-css": "*",
+    "csswring": "*",
     "minimatch": "*",
-    "csswring": "*"
+    "fs-extra": "*"
   },
   "devDependencies": {
-      "expect.js": "*",
-      "mocha": "*"
+    "expect.js": "*",
+    "mocha": "*"
   },
   "scripts": {
   },

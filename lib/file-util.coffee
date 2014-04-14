@@ -1,3 +1,5 @@
+require("coffee-script")
+
 fs = require("fs")
 path = require("path")
 

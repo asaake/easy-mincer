@@ -1,16 +1,21 @@
 #!/usr/bin/env coffee
+require "coffee-script"
+require "sugar"
 
-fs = require("fs")
-path = require("path")
-program = require("commander")
+fs = require "fs"
+path = require "path"
+program = require "commander"
 
 program
-  .version('1.2.2')
+  .version('1.3.0')
   .usage("start|compile [option]")
   .option("compile", "compile source code.")
   .option("start", "start mincer server. default: localhost:3000")
   .option("init", "create easy mincer project.")
   .option("-f, --file [file]", "use easy-mincer config. default is {cwd}/easy-mincer.json")
+  .option("min", "override compile mode minify.")
+  .option("noraml", "override compile mode noraml.")
+  .option("sourceMaps", "override compile mode sourceMaps")
   .parse(process.argv)
 
 if program.file?
@@ -19,18 +24,36 @@ else
   program.file = "#{process.cwd()}/easy-mincer.json"
 
 if program.compile
-  EasyMincer = require("../lib/easy-mincer.coffee")
-  easyMincer = new EasyMincer(program.file)
-  easyMincer.compile()
+  Config = require("../lib/config")
+  config = Config.readConfigFile(program.file)
+  if program.noraml
+    config.useJsCompressor = false
+    config.useCssCompressor = false
+
+  if program.min
+    config.useJsCompressor = true
+    config.useCssCompressor = true
+
+  if program.sourceMaps
+    config.useSourceMaps = true
+
+  Compiler = require("../lib/compiler")
+  compiler = new Compiler(config)
+  compiler.clean()
+  compiler.createManifest()
+  compiler.exportDestFiles()
 
 if program.start
-  EasyMincer = require("../lib/easy-mincer.coffee")
-  easyMincer = new EasyMincer(program.file)
-  easyMincer.start()
+  Server = require("../lib/server")
+  server = new Server(program.file)
+  server.usePublic()
+  server.useRewrite()
+  server.useMincer()
+  server.start()
 
 if program.init
 
-  ProjectCreator = require("../lib/project-creator.coffee")
+  ProjectCreator = require("../lib/project-creator")
   projectCreator = new ProjectCreator(process.cwd())
 
   itemSize = fs.readdirSync(process.cwd()).length
