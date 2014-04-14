@@ -26,6 +26,12 @@ describe "Compiler", () ->
     config = new Config(@config)
     compiler = new Compiler(config)
 
+    if not(Fs.existsSync(@config.manifestDir))
+      Fs.mkdirSync(@config.manifestDir)
+
+    if not(Fs.existsSync(@config.destDir))
+      Fs.mkdirSync(@config.destDir)
+
     Fs.writeFileSync(Path.join(config.manifestDir, "blank", ""))
     Fs.writeFileSync(Path.join(config.destDir, "blank", ""))
     expect(Fs.readdirSync(config.manifestDir).length).to.greaterThan(0)
