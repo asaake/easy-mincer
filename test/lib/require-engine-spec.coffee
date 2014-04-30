@@ -29,21 +29,18 @@ describe "Server", () ->
       res.on "data", (chunk) =>
         #console.log('BODY: ' + chunk)
         expect(chunk).to.eql("""
-          defineName("amd", function () {
-          (function() {
-            define([], function() {
-              var AmdClass;
-              return AmdClass = (function() {
-                function AmdClass() {}
+          (function () {
+            define("amd", [], function() {
+              var Amd;
+              return Amd = (function() {
+                function Amd() {}
 
-                return AmdClass;
+                return Amd;
 
               })();
             });
 
           }).call(this);
-
-          });
         """)
         done()
 

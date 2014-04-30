@@ -1,2 +1,2 @@
 define [], () ->
-  class AmdClass
+  class Amd
