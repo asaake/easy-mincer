@@ -4,7 +4,7 @@ expect = require "expect.js"
 Path = require "path"
 Fs = require "fs"
 Config = require "../../lib/config"
-Compiler = require "../../lib/compiler"
+Compiler = require "../../lib/runtimes/compiler"
 
 describe "Compiler", () ->
 

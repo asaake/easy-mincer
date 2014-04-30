@@ -1,5 +1,5 @@
 expect = require "expect.js"
-Server = require "../../lib/server"
+Server = require "../../lib/runtimes/server"
 Path = require "path"
 Fs = require "fs"
 Http = require "http"

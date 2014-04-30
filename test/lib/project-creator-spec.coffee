@@ -1,11 +1,11 @@
-expect = require("expect.js")
-path = require("path")
-fs = require("fs")
+expect = require "expect.js"
+path = require "path"
+fs = require "fs"
 
 describe "ProjectCreator", () ->
 
   it "create", () ->
-    ProjectCreator = require("../../lib/project-creator.coffee")
+    ProjectCreator = require("../../lib/runtimes/project-creator.coffee")
     dir = path.resolve("#{__dirname}/../work")
     creator = new ProjectCreator(dir)
 

@@ -1,12 +1,13 @@
 require "coffee-script"
+require "../initializer"
 
 Mincer = require "mincer"
 Path = require "path"
 Fs = require "fs"
 Express = require "express"
 Minimatch = require "minimatch"
-FileUtil = require "./file-util"
-Config = require "./config"
+FileUtil = require "../utils/file-util"
+Config = require "../config"
 
 module.exports = class Server
 

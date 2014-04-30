@@ -1,14 +1,15 @@
 require "coffee-script"
+require "../initializer"
 
 fs = require "fs"
 path = require "path"
-fu = require "./file-util"
+fu = require "../utils/file-util"
 
 module.exports = class ProjectCreator
 
   constructor: (targetDir) ->
     @targetDir = targetDir
-    @projectDir = "#{__dirname}/project"
+    @projectDir = "#{__dirname}/../resources/project"
 
   create: (process) ->
 

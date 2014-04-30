@@ -30,13 +30,9 @@ module.exports = class Config
     for key, value of config
       @[key] = value
 
-    # mincer
-    Mincer.CoffeeEngine.configure({bare: false})
-
     # logger
     logger = {}
     config.log ?= {}
-
     if config.log.debug
       logger["log"] = console.log
       logger["debug"] = console.log
@@ -109,7 +105,7 @@ module.exports = class Config
       environment.jsCompressor = "uglify"
 
     if config.useCssCompressor
-      environment.cssCompressor = "csswring";
+      environment.cssCompressor = "csswring"
 
     return environment
 
