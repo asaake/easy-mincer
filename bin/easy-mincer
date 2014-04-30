@@ -7,7 +7,7 @@ path = require "path"
 program = require "commander"
 
 program
-  .version('1.3.2')
+  .version('1.3.3')
   .usage("start|compile [option]")
   .option("compile", "compile source code.")
   .option("start", "start mincer server. default: localhost:3000")

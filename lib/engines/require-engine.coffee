@@ -10,7 +10,7 @@ module.exports = class RequireEngine extends Mincer.Template
   evaluate: (context) ->
     context.logicalPath
     this.data = """
-      defineName(#{context.logicalPath}, function () {
+      defineName("#{context.logicalPath}", function () {
       #{this.data}
       });
     """

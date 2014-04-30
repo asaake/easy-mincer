@@ -29,7 +29,7 @@ describe "Server", () ->
       res.on "data", (chunk) =>
         #console.log('BODY: ' + chunk)
         expect(chunk).to.eql("""
-          defineName(amd, function () {
+          defineName("amd", function () {
           (function() {
             define([], function() {
               var AmdClass;
