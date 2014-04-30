@@ -6,26 +6,18 @@ module.exports = class RequireEngine extends Mincer.Template
 
   constructor: () ->
     super
-    @define = "define"
-    @defineMatcher = new RegExp("^#{@define}")
-
-    @bare = "\\(function\\(\\) {"
-    @bareMatcher = new RegExp("^#{@bare}")
 
   evaluate: (context) ->
+    define = "define"
     name = context.logicalPath
     data = this.data
-    isBare = false
-    if @bareMatcher.test(data)
-      isBare = true
-      data = data.substr(@bare.length).trimLeft()
-
-    if @defineMatcher.test(data)
-      data = data.substr(@define.length) # define ([], function ()... -> ([], function () ...
+    index = data.indexOf(define)
+    if index != -1
+      before = data.substr(0, index)
+      data = data.substr(index)
+      data = data.substr(define.length) # define ([], function ()... -> ([], function () ...
       data = data.trimLeft() # ([], function () ...
       data = data.substr(1)  # [], function () ...
-      data = @define + "(\"#{name}\", " + data # ("name", [], function () ...
-      if isBare
-        data = "(function () {\n  " + data
+      data = before + define + "(\"#{name}\", " + data # ("name", [], function () ...
       this.data = data
 
