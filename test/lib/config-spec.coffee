@@ -1,79 +1,75 @@
-expect = require("expect.js")
-Path = require "path"
+expect = require "expect.js"
+path = require "path"
 Config = require "../../lib/config"
 
 describe "Config", () ->
 
   describe "設定をオブジェクトで読み込む", () ->
 
-    it "mainDirがない場合はエラーが発生する", () ->
+    it "workDirがない場合はエラーが発生する", () ->
       try
         new Config({})
         fial("don't error")
       catch e
-        expect(e.message).to.eql("config.mainDir is required.")
+        expect(e.message).to.eql("config.workDir is required.")
 
-    it "読み込み", () ->
-      root = Path.join(__dirname, "..")
-      options = {
-        mainDir: root
-      }
-      config = new Config(options)
+
+    it "readConfig: ファイル名を指定して設定を読み込める", () ->
+      workDir = path.join(__dirname, "..")
+      file = path.join(workDir, "easy-mincer.json")
+      config = new Config(file)
+
+      expect(config.workDir).to.eql(workDir)
+      expect(config.destDir).to.eql(path.join(workDir, "dest"))
+
       expect(config.port).to.eql(3000)
       expect(config.serverRoot).to.eql("/")
-      expect(config.targets).to.eql([])
-      expect(config.paths).to.eql([])
-      expect(config.publicPaths).to.eql([])
-      expect(config.rewrites).to.eql({})
+
+      # assets
+      expect(config.assets.contextRoot).to.eql("/assets")
+      expect(config.assets.paths).to.eql([
+        "app/assets/javascripts"
+        "app/assets/stylesheets"
+        "app/assets/templates"
+      ])
+      expect(config.assets.useSourceMaps).to.eql(false)
+
+      # public
+      expect(config.public.contextRoot).to.eql("/")
+      expect(config.public.paths).to.eql([
+        "app/public/javascripts"
+        "app/public/stylesheets"
+        "app/public/templates"
+      ])
+
+      # rewrite
+      expect(config.rewrite.paths).to.eql([{
+        "/rewrite/**": "/public.html"
+      }])
+      expect(config.rewrite.ignorePaths).to.eql([
+        "/assets/**"
+      ])
+
       expect(config.log).to.eql({
-        "debug": false,
-        "info": false,
-        "warn": true,
-        "error": true
+          "debug": false,
+          "info": true,
+          "warn": true,
+          "error": true
       })
-      expect(config.useSourceMaps).to.eql(false)
 
-      # environment
-      environment = config.environment
-      expect(environment.root).to.eql(root)
-      expect(environment.paths).to.eql([])
+      expect(config.compile.paths).to.eql(["main.js", "main.css", "nest/main.js"])
 
-  it "設定をファイルで読み込む", () ->
-    root = Path.join(__dirname, "..")
-    config = new Config(Path.join(root, "easy-mincer.json"))
-    expect(config.port).to.eql(3000)
-    expect(config.serverRoot).to.eql("/assets")
-    expect(config.targets).to.eql(["main.js", "main.css"])
-    expect(config.paths).to.eql([
-      "app/assets/javascripts"
-      "app/assets/stylesheets"
-      "app/assets/templates"
-    ])
-    expect(config.publicPaths).to.eql([
-      "#{root}/app/public/javascripts"
-      "#{root}/app/public/stylesheets"
-      "#{root}/app/public/templates"
-    ])
-    expect(config.rewrites).to.eql({
-      "/**": "/assets/public.html"
-    })
-    expect(config.log).to.eql({
-        "debug": false,
-        "info": false,
-        "warn": true,
-        "error": true
-    })
-    expect(config.useSourceMaps).to.eql(false)
+    it "createEnvironment: 設定に従ってEnvironmentオブジェクトを作成できる", () ->
 
-    # environment
-    environment = config.environment
-    expect(environment.root).to.eql(root)
-    expect(environment.paths).to.eql([
-      "#{root}/app/assets/javascripts"
-      "#{root}/app/assets/stylesheets"
-      "#{root}/app/assets/templates"
-    ])
+      workDir = path.join(__dirname, "..")
+      file = path.join(workDir, "easy-mincer.json")
+      config = new Config(file)
 
-    # generate config
-    expect(config.manifestDir).to.eql(Path.join(root, "manifest"))
-    expect(config.destDir).to.eql(Path.join(root, "dest"))
+      environment = config.createEnvironment()
+      expect(environment.root).to.eql(config.workDir)
+      expect(environment.paths).to.eql([
+        "#{config.workDir}/app/assets/javascripts"
+        "#{config.workDir}/app/assets/stylesheets"
+        "#{config.workDir}/app/assets/templates"
+      ])
+      expect(environment.isEnabled("source_maps")).to.eql(false)

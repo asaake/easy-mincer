@@ -1,7 +1,7 @@
 {
   "name": "easy-mincer",
   "bin": "bin/easy-mincer",
-  "version": "1.3.5",
+  "version": "1.4.0",
   "description": "easy start mincer",
   "dependencies": {
     "sugar": "*",

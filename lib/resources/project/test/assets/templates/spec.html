@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
+
+    <link rel="stylesheet" href="/assets/vendor.less">
+    <link red="stylesheet" href="/assets/app.less">
+    <link rel="stylesheet" href="/assets/test-vendor.less">
+
+    <script src="/assets/vendor.coffee" type="text/javascript"></script>
+    <script src="/assets/test-vendor.coffee" type="text/javascript"></script>
+    <script type="text/javascript">
+      mocha.setup({ui: 'bdd', reporter: function(runner) {
+        new (mocha.reporter("html")._reporter)(runner);
+        runner.on('fail', function(test, err){
+          console.error(err.stack)
+        });
+      }});
+    </script>
+    <script src="/assets/spec.coffee" type="text/javascript"></script>
+    <script type="text/javascript">
+      window.onload = function () {
+        mocha.run();
+      };
+    </script>
+</head>
+<body>
+<div id="mocha"></div>
+<div id="mock"></div>
+</body>
+</html>

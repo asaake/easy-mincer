@@ -1,13 +1,12 @@
 expect = require "expect.js"
 Server = require "../../lib/runtimes/server"
-Path = require "path"
-Fs = require "fs"
-Http = require "http"
+path = require "path"
+http = require "http"
 
 describe "Server", () ->
 
   beforeEach (done) ->
-    @file = Path.normalize("#{__dirname}/../easy-mincer.json")
+    @file = path.normalize("#{__dirname}/../easy-mincer.json")
     @server = new Server(@file)
     @server.useMincer()
     @server.start(() ->
@@ -23,13 +22,13 @@ describe "Server", () ->
 
   it "compileAmdFile", (done) ->
     port = @server.config.port
-    Http.get "http://localhost:#{port}/assets/amd.js", (res) =>
+    http.get "http://localhost:#{port}/assets/amd.js", (res) =>
       expect(res.statusCode).to.eql(200)
       res.setEncoding("utf8")
       res.on "data", (chunk) =>
         #console.log('BODY: ' + chunk)
         expect(chunk).to.eql("""
-          (function () {
+          (function() {
             define("amd", [], function() {
               var Amd;
               return Amd = (function() {

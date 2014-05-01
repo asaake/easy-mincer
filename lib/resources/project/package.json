@@ -1,5 +1,5 @@
 {
-  "name": "",
+  "name": "blank",
   "version": "0.0.1",
   "description": "",
   "dependencies": {
@@ -15,6 +15,6 @@
     "compile": "easy-mincer compile",
     "start": "easy-mincer start"
   },
-  "author": "",
+  "author": "blank",
   "license": "MIT"
 }

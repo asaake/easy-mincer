@@ -1,10 +1,9 @@
 require "coffee-script"
 require "../initializer"
 
+path = require "path"
+fs = require "../utils/my-fs"
 Mincer = require "mincer"
-Path = require "path"
-Fs = require "fs-extra"
-FileUtil = require "../utils/file-util"
 Config = require "../config"
 
 module.exports = class Compiler
@@ -16,54 +15,87 @@ module.exports = class Compiler
       @config = new Config(config)
 
   clean: () ->
-    FileUtil.cleanSync(@config.destDir, false)
-    FileUtil.cleanSync(@config.manifestDir, false)
+    fs.cleanSync(@config.destDir, false)
+    return
 
-  createManifest: () ->
-    # create export manifest folder
-    if not(Fs.existsSync(@config.manifestDir))
-      Fs.mkdirSync(@config.manifestDir)
+  setup: () ->
+    unless fs.existsSync(@config.destDir)
+      fs.mkdirSync(@config.destDir)
+    return
 
-    environment = @config.environment
-    manifest = new Mincer.Manifest(environment, @config.manifestDir)
-    try
-      assetsData = manifest.compile(@config.targets, {
-        compress: true,
-        sourceMaps: true,
-        embedMappingComments: true
-      });
+  compile: () ->
+    @setup()
+    @createDebug()
+    @createMinify()
+    return
 
-      console.info("""
-        Assets were successfully compiled.
-        Manifest data (a proper JSON) was written to:
-          manifest.path
+  getDebugDir: () ->
+    path.join(@config.destDir, "debug")
 
-      """)
-      console.dir(assetsData)
-      return assetsData
-    catch err
-      console.error("Failed compile assets: " + (err.message || err.toString()))
-      throw err
+  getMinifyDir: () ->
+    path.join(@config.destDir, "minify")
 
-  exportDestFiles: () ->
+  createFiles: (outputDir, options) ->
+    files = @config.compile.paths
+    environment = @config.createEnvironment(options)
 
-    if not(Fs.existsSync(@config.destDir))
-      Fs.mkdirSync(@config.destDir)
+    paths = []
+    environment.eachLogicalPath files, (pathname) ->
+      paths.push(pathname)
 
-    # manifest files copy
-    destFiles = []
-    files = Fs.readdirSync(@config.manifestDir)
-    files.forEach (file) =>
-      h = file.lastIndexOf("-")
-      if h != -1
-        p = file.indexOf(".", h)
-        destFile = file.slice(0, h) + file.slice(p)
-        dest = Path.join(@config.destDir, destFile)
-        src = Path.join(@config.manifestDir, file)
+    assetsRootDir = path.join(outputDir, @config.assets.contextRoot)
+    paths.forEach (logicalPath) ->
+      asset = undefined
+      target = undefined
+      asset = environment.findAsset(logicalPath, {
+        bundle: true
+      })
+      unless asset
+        throw new Error("Can not find asset '" + logicalPath + "'")
 
-        Fs.copySync(src, dest)
-        destFiles.push(file)
-        console.info("export #{file} -> #{destFile}")
+      target = path.join(assetsRootDir, logicalPath)
+      if fs.existsSync(target)
+        console.warn("skip file: #{target}")
 
-    return destFiles
+      buffer = asset.buffer
+      if asset.sourceMap? && options.useSourceMaps?
+        fs.outputFileSync "#{target}.map", asset.sourceMap
+        buffer = asset.buffer + "\n/*# sourceMappingURL=" + "#{logicalPath}.map */"
+
+      fs.outputFileSync(target, buffer)
+      console.info("assets create: " + logicalPath)
+
+    # public
+    publicRootDir = path.join(outputDir, @config.public.contextRoot)
+    for pubPath in @config.public.paths
+      fs.copySync(path.join(@config.workDir, pubPath), publicRootDir)
+      console.info("public copy: " + pubPath)
+
+    return
+
+  createDebug: () ->
+    @createFiles(@getDebugDir(), {
+      useSourceMaps: true
+    })
+
+  createMinify: () ->
+    @createFiles(@getMinifyDir(), {
+      useSourceMaps: true
+      jsCompressor: "uglify"
+      cssCompressor: "csswring"
+    })
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

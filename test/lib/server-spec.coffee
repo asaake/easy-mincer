@@ -1,13 +1,17 @@
+require "coffee-script"
+require "sugar"
+
 expect = require "expect.js"
+path = require "path"
+fs = require "../../lib/utils/my-fs"
+http = require "http"
+
 Server = require "../../lib/runtimes/server"
-Path = require "path"
-Fs = require "fs"
-Http = require "http"
 
 describe "Server", () ->
 
   beforeEach () ->
-    @file = Path.normalize("#{__dirname}/../easy-mincer.json")
+    @file = path.normalize("#{__dirname}/../easy-mincer.json")
     @server = new Server(@file)
 
   afterEach (done) ->
@@ -26,7 +30,7 @@ describe "Server", () ->
     @server.usePublic()
     @server.start()
     port = @server.config.port
-    Http.get "http://localhost:#{port}/assets/public.html", (res) =>
+    http.get "http://localhost:#{port}/public.html", (res) =>
       expect(res.statusCode).to.eql(200)
       res.setEncoding("utf8")
       res.on "data", (chunk) =>
@@ -38,7 +42,7 @@ describe "Server", () ->
     @server.usePublic()
     @server.start()
     port = @server.config.port
-    Http.get "http://localhost:#{port}/hello-world/me", (res) =>
+    http.get "http://localhost:#{port}/rewrite/hello-world/me", (res) =>
       expect(res.statusCode).to.eql(200)
       res.setEncoding("utf8")
       res.on "data", (chunk) =>
@@ -49,7 +53,7 @@ describe "Server", () ->
     @server.useMincer()
     @server.start()
     port = @server.config.port
-    Http.get "http://localhost:#{port}/assets/main.coffee", (res) =>
+    http.get "http://localhost:#{port}/assets/main.coffee", (res) =>
       expect(res.statusCode).to.eql(200)
       res.setEncoding("utf8")
       res.on "data", (chunk) =>

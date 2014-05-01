@@ -1,6 +1,6 @@
 expect = require "expect.js"
 path = require "path"
-fs = require "fs"
+fs = require "../../lib/utils/my-fs"
 
 describe "ProjectCreator", () ->
 

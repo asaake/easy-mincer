@@ -1,12 +1,12 @@
 require "coffee-script"
+require "sugar"
 require "../initializer"
 
 Mincer = require "mincer"
-Path = require "path"
-Fs = require "fs"
+path = require "path"
+fs = require "../utils/my-fs"
 Express = require "express"
 Minimatch = require "minimatch"
-FileUtil = require "../utils/file-util"
 Config = require "../config"
 
 module.exports = class Server
@@ -17,29 +17,42 @@ module.exports = class Server
 
   useRewrite: () ->
     @app.use (req, res, next) =>
-      isAssets = Minimatch(req.url, @config.serverRoot + "/**")
-      if not(isAssets)
-        for rewriteRegex, rewrite of @config.rewrites
-          isRewrite = Minimatch(req.url, rewriteRegex)
+      rewriteRoot = @config.serverRoot
+      isIgnore = false
+      for ignorePath in @config.rewrite.ignorePaths
+        isIgnore = Minimatch(req.url, path.join(rewriteRoot, ignorePath))
+        if isIgnore
+          break
+
+      unless isIgnore
+        for rewrite in @config.rewrite.paths
+          keys = Object.keys(rewrite)
+          rewriteRegex = keys[0]
+          rewritePath = rewrite[rewriteRegex]
+          isRewrite = Minimatch(req.url, path.join(rewriteRoot, rewriteRegex))
           if isRewrite
-            Mincer.logger["info"]("rewrite: #{req.url} -> #{rewrite}")
-            req.url = rewrite
+            rewritePath = path.join(rewriteRoot, rewritePath)
+            Mincer.logger["info"]("rewrite: #{req.url} -> #{rewritePath}")
+            req.url = rewritePath
             break
 
       next()
 
   usePublic: () ->
-    for publicPath in @config.publicPaths
-      @app.use(@config.serverRoot, Express.static(publicPath))
+    pubRoot = path.join(@config.serverRoot, @config.public.contextRoot)
+    for pubPath in @config.public.paths
+      pubPath = path.join(@config.workDir, pubPath)
+      @app.use(pubRoot, Express.static(pubPath))
 
   useMincer: () ->
-    server = new Mincer.Server(@config.environment)
-    @app.use @config.serverRoot, (req, res) =>
+    assetsRoot = path.join(@config.serverRoot, @config.assets.contextRoot)
+    server = new Mincer.Server(@config.createEnvironment())
+    console.log "assetsRoot: [" + assetsRoot + "]"
+    @app.use assetsRoot, (req, res) =>
       server.handle(req, res)
 
   start: (callback) ->
-
-    @appProcess = @app.listen(@config.port, (err) =>
+    @process = @app.listen(@config.port, (err) =>
       if err
         console.error("Failed start server: " + (err.message || err.toString()))
         process.exit(128)
@@ -52,9 +65,9 @@ module.exports = class Server
 
   stop: (callback) ->
     if not @isRunning() then throw new Error("not running server.")
-    @appProcess.close(callback)
-    @appProcess = null
+    @process.close(callback)
+    @process = null
 
   isRunning: () ->
-    @appProcess?
+    @process?
 

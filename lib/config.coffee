@@ -1,15 +1,18 @@
+require "coffee-script"
+require "sugar"
+
 Mincer = require "mincer"
-Fs = require "fs"
-Path = require "path"
+fs = require "./utils/my-fs"
+path = require "path"
 
 module.exports = class Config
 
   @readConfigFile: (file) ->
     try
-      console.info("config: #{file}")
-      text = Fs.readFileSync(file)
+      console.info("read config: #{file}")
+      text = fs.readFileSync(file)
       config = JSON.parse(text)
-      config.mainDir = Path.dirname(file)
+      config.workDir = path.dirname(file)
       return config
     catch e
       throw new Error("#{text} json parse error. to #{e.toString()}")
@@ -21,16 +24,76 @@ module.exports = class Config
     else
       config = options
 
-    @setUpDefault(config)
-    config.rewrites = @createRewrites(config)
-    config.publicPaths = @createPublicPaths(config)
-    config.environment = @createEnvironment(config)
+    config = @mergeDefault(config)
+    config = @setup(config)
+
+    # setup logger
+    @setupLogger(config)
 
     # copy config
     for key, value of config
       @[key] = value
+    @_config = config
 
-    # logger
+  setup: (config) ->
+    config.serverRoot = path.normalize(config.serverRoot)
+    config.workDir = path.normalize(config.workDir)
+    config.destDir = path.join(config.workDir, "dest")
+
+    config
+
+  mergeDefault: (config) ->
+
+    if not(config.workDir?)
+      throw new Error("config.workDir is required.")
+
+    defaultConfig = {
+      port: 3000
+      serverRoot: "/"
+      assets: {
+        useSourceMaps: false
+        contextRoot: "/"
+        paths: []
+      }
+      public: {
+        contextRoot: "/"
+        paths: []
+      }
+      rewrite: {
+        paths: []
+        ignorePaths: []
+      }
+      log: {
+        debug: false
+        info: true
+        warn: true
+        error: true
+      }
+      compile: {
+        paths: []
+      }
+    }
+
+    clone = Object.clone(defaultConfig, true)
+    Object.merge(clone, config, true)
+
+  createEnvironment: (options={}) ->
+    environment = new Mincer.Environment(@workDir)
+    for assetsPath in @assets.paths
+      environment.appendPath(assetsPath)
+
+    if @assets.useSourceMaps || options.useSourceMaps
+      environment.enable("source_maps")
+
+    if options.jsCompressor?
+      environment.jsCompressor = options.jsCompressor
+
+    if options.cssCompressor?
+      environment.cssCompressor = options.cssCompressor
+
+    return environment
+
+  setupLogger: (config) ->
     logger = {}
     config.log ?= {}
     if config.log.debug
@@ -47,65 +110,4 @@ module.exports = class Config
       logger["error"] = console.error
 
     Mincer.logger.use(logger)
-    @readConfig = config
-
-  setUpDefault: (config) ->
-
-    if not(config.mainDir?)
-      throw new Error("config.mainDir is required.")
-
-    # default
-    config.port ?= 3000
-    config.serverRoot ?= "/"
-    config.targets ?= []
-    config.paths ?= []
-    config.publicPaths ?= []
-    config.rewrites ?= []
-    config.log ?= {
-      debug: false
-      info: false
-      warn: true
-      error: true
-    }
-    config.useSourceMaps ?= false
-    config.useJsCompressor ?= false
-    config.useCssCompressor ?= false
-
-    # setup
-    config.serverRoot = Path.normalize(config.serverRoot)
-    config.destDir = Path.join(config.mainDir, "/dest")
-    config.manifestDir = Path.join(config.mainDir, "/manifest")
-
-  createRewrites: (config) ->
-    rewrites = {}
-    for rewriteRegex, rewrite of config.rewrites
-      rewrite = Path.join(config.serverRoot, rewrite)
-      rewrites[rewriteRegex] = rewrite
-      console.info("rewrite path: #{rewriteRegex} -> #{rewrite}")
-    return rewrites
-
-  createPublicPaths: (config) ->
-    publicPaths = []
-    for publicPath in config.publicPaths
-      path = Path.join(config.mainDir, publicPath)
-      publicPaths.push(Path.join(config.mainDir, publicPath))
-      console.info("public path: #{path}")
-    return publicPaths
-
-  createEnvironment: (config) ->
-    environment = new Mincer.Environment(config.mainDir)
-    for path in config.paths
-      environment.appendPath(path);
-      console.info("assets path: #{path}")
-
-    if config.useSourceMaps
-      environment.enable("source_maps")
-
-    if config.useJsCompressor
-      environment.jsCompressor = "uglify"
-
-    if config.useCssCompressor
-      environment.cssCompressor = "csswring"
-
-    return environment
 

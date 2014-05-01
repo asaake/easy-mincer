@@ -7,15 +7,12 @@ path = require "path"
 program = require "commander"
 
 program
-  .version('1.3.5')
+  .version('1.4.0')
   .usage("start|compile [option]")
   .option("compile", "compile source code.")
   .option("start", "start mincer server. default: localhost:3000")
   .option("init", "create easy mincer project.")
   .option("-f, --file [file]", "use easy-mincer config. default is {cwd}/easy-mincer.json")
-  .option("min", "override compile mode minify.")
-  .option("noraml", "override compile mode noraml.")
-  .option("sourceMaps", "override compile mode sourceMaps")
   .parse(process.argv)
 
 if program.file?
@@ -24,24 +21,10 @@ else
   program.file = "#{process.cwd()}/easy-mincer.json"
 
 if program.compile
-  Config = require("../lib/config")
-  config = Config.readConfigFile(program.file)
-  if program.noraml
-    config.useJsCompressor = false
-    config.useCssCompressor = false
-
-  if program.min
-    config.useJsCompressor = true
-    config.useCssCompressor = true
-
-  if program.sourceMaps
-    config.useSourceMaps = true
-
   Compiler = require("../lib/runtimes/compiler")
-  compiler = new Compiler(config)
+  compiler = new Compiler(program.file)
   compiler.clean()
-  compiler.createManifest()
-  compiler.exportDestFiles()
+  compiler.compile()
 
 if program.start
   Server = require("../lib/runtimes/server")

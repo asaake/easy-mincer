@@ -1,9 +1,8 @@
 require "coffee-script"
 require "../initializer"
 
-fs = require "fs"
+fs = require "../utils/my-fs"
 path = require "path"
-fu = require "../utils/file-util"
 
 module.exports = class ProjectCreator
 
@@ -17,13 +16,13 @@ module.exports = class ProjectCreator
       fs.mkdirSync(@targetDir)
 
     fs.readdirSync(@projectDir).forEach (file) =>
-      fu.copySync(path.join(@projectDir, file), path.join(@targetDir, file))
+      fs.copySync(path.join(@projectDir, file), path.join(@targetDir, file))
 
     fs.renameSync("#{@targetDir}/gitignore", "#{@targetDir}/.gitignore")
 
     fs.readdirSync(@targetDir).forEach (file) =>
-      fu.chownSync(path.join(@targetDir, file), process.getuid(), process.getgid())
+      fs.chownRSync(path.join(@targetDir, file), process.getuid(), process.getgid())
 
   clean: () ->
-    fu.cleanSync(@targetDir, false)
+    fs.cleanSync(@targetDir, false)
 

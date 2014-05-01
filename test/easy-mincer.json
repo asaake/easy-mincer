@@ -1,27 +1,38 @@
 {
   "port": 3000,
-  "serverRoot": "/assets",
-  "targets": ["main.js", "main.css"],
-  "paths": [
-    "app/assets/javascripts",
-    "app/assets/stylesheets",
-    "app/assets/templates"
-  ],
-  "publicPaths": [
-    "app/public/javascripts",
-    "app/public/stylesheets",
-    "app/public/templates"
-  ],
-  "rewrites": {
-    "/**": "/public.html"
+  "serverRoot": "/",
+  "assets": {
+    "contextRoot": "/assets",
+    "paths": [
+      "app/assets/javascripts",
+      "app/assets/stylesheets",
+      "app/assets/templates"
+    ],
+    "useSourceMaps": false
+  },
+  "public": {
+    "contextRoot": "/",
+    "paths": [
+      "app/public/javascripts",
+      "app/public/stylesheets",
+      "app/public/templates"
+    ]
+  },
+  "rewrite": {
+    "paths": [
+      {"/rewrite/**": "/public.html"}
+    ],
+    "ignorePaths": [
+      "/assets/**"
+    ]
   },
   "log": {
     "debug": false,
-    "info": false,
+    "info": true,
     "warn": true,
     "error": true
   },
-  "useSourceMaps": false,
-  "useJsCompressor": false,
-  "useCssCompressor": false
+  "compile": {
+    "paths": ["main.js", "main.css", "nest/main.js"]
+  }
 }
